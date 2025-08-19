@@ -83,16 +83,25 @@ function Footer() {
   );
 }
 
-function ErrorBoundary({ children }) {
-  const [error, setError] = useState(null);
-  if (error) return <div className="dark-full-container"><div className="dark-content-container pad-large"><div className="glass-card p-6"><h2 className="heading-2 mb-2">Something went wrong</h2><p className="body-small">Please refresh the page.</p></div></div></div>;
-  return (
-    <React.Suspense fallback={<div className="dark-full-container"><div className="dark-content-container pad-large"><div className="glass-card p-6">Loading…</div></div></div>}>
-      <React.ErrorBoundary fallbackRender={({ error }) => { setError(error); return null; }}>
-        {children}
-      </React.ErrorBoundary>
-    </React.Suspense>
-  );
+class AppErrorBoundary extends React.Component {
+  constructor(props) { super(props); this.state = { hasError: false, error: null }; }
+  static getDerivedStateFromError(error) { return { hasError: true, error }; }
+  componentDidCatch(error, info) { console.error("ErrorBoundary caught:", error, info); }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="dark-full-container">
+          <div className="dark-content-container pad-large">
+            <div className="glass-card p-6">
+              <h2 className="heading-2 mb-2">Something went wrong</h2>
+              <p className="body-small">Please refresh the page.</p>
+            </div>
+          </div>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
 }
 
 function AppShell() {
