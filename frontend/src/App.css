@@ -16,9 +16,7 @@
   --brand-active: #6FD2C0;
 }
 
-/* Typography - use Space Grotesk for headings, Inter for body */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@400;600;700&display=swap');
-
+/* Typography - fonts via index.html links (preconnected) */
 body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, Helvetica Neue, sans-serif;
   background: var(--bg-primary);
@@ -37,64 +35,19 @@ body {
 .body-muted { font-size: 16px; font-weight: 400; color: var(--text-muted); }
 
 /* Buttons (sharp corners) */
-.btn-primary {
-  background: var(--brand-primary);
-  color: #000000;
-  border: none;
-  border-radius: 0px;
-  padding: 14px 24px;
-  font-size: 18px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.3s ease, color 0.3s ease, transform 0.2s ease;
-  min-height: 56px;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-}
+.btn-primary { background: var(--brand-primary); color: #000000; border: none; border-radius: 0px; padding: 14px 24px; font-size: 18px; font-weight: 600; cursor: pointer; transition: background 0.3s ease, color 0.3s ease, transform 0.2s ease; min-height: 56px; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; gap: 12px; }
 .btn-primary:hover { background: var(--brand-hover); color: var(--brand-primary); }
 .btn-primary:active { background: var(--brand-active); transform: scale(0.98); }
 
-.btn-secondary {
-  background: rgba(255,255,255,0.1);
-  color: #ffffff;
-  border: none;
-  border-radius: 0px;
-  padding: 14px 24px;
-  font-size: 18px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background 0.3s ease, color 0.3s ease, transform 0.2s ease;
-  min-height: 56px;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-}
+.btn-secondary { background: rgba(255,255,255,0.1); color: #ffffff; border: none; border-radius: 0px; padding: 14px 24px; font-size: 18px; font-weight: 500; cursor: pointer; transition: background 0.3s ease, color 0.3s ease, transform 0.2s ease; min-height: 56px; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; gap: 12px; }
 .btn-secondary:hover { background: #ffffff; color: #000000; }
 .btn-secondary:active { background: #F0F0F0; transform: scale(0.98); }
 
 /* Header */
-.dark-header {
-  background: var(--bg-primary);
-  border-bottom: 1px solid var(--border-subtle);
-  padding: 16px 7.6923%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  position: fixed;
-  top: 0;
-  width: 100%;
-  height: 80px;
-  z-index: 10;
-  box-sizing: border-box;
-}
+.dark-header { background: rgba(0,0,0,0.7); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid var(--border-subtle); padding: 16px 7.6923%; display: flex; align-items: center; justify-content: space-between; position: fixed; top: 0; width: 100%; height: 80px; z-index: 20; box-sizing: border-box; }
 .dark-logo { height: 40px; object-fit: contain; cursor: pointer; }
-.dark-nav { display: flex; align-items: center; gap: 32px; }
-.dark-nav-link { color: rgba(255,255,255,0.6); text-decoration: none; font-size: 18px; font-weight: 400; transition: color 0.3s ease; }
+.dark-nav { display: flex; align-items: center; gap: 24px; }
+.dark-nav-link { color: rgba(255,255,255,0.7); text-decoration: none; font-size: 16px; font-weight: 500; transition: color 0.2s ease; display: inline-flex; align-items: center; gap: 8px; }
 .dark-nav-link:hover { color: #fff; }
 .dark-nav-link.active { color: var(--brand-active); }
 
@@ -105,22 +58,29 @@ body {
 .pad-xlarge { padding-top: 100px; padding-bottom: 100px; }
 
 /* Cards */
-.glass-card {
-  background: var(--bg-overlay);
-  border: 1px solid rgba(255,255,255,0.12);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
-  border-radius: 12px;
-}
+.glass-card { background: var(--bg-overlay); border: 1px solid rgba(255,255,255,0.12); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); border-radius: 12px; }
 
-.dark-transition { transition: all 0.4s ease-in-out; }
+/* Focus and a11y */
+.focus-ring { outline: none; box-shadow: 0 0 0 3px rgba(0,255,209,0.4); transition: box-shadow 0.2s ease; }
+.skip-link { position: absolute; left: -9999px; top: -9999px; }
+.skip-link:focus { left: 16px; top: 16px; background: #000; color: #fff; padding: 8px 12px; z-index: 50; }
+
+.dark-transition { transition: transform 0.25s ease, box-shadow 0.25s ease; }
 .dark-hover:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(0,255,209,0.2); }
 
+/* Light mode surfaces (keep large areas black to comply with 90/10) */
+.light-mode .glass-card { background: rgba(255,255,255,0.88); color: #111; border-color: rgba(0,0,0,0.1); }
+.light-mode .glass-card .body-small, .light-mode .glass-card .body-medium { color: #1a1a1a; }
+.light-mode .btn-secondary { background: rgba(0,0,0,0.08); color: #000; }
+.light-mode .btn-secondary:hover { background: #000; color: #fff; }
+.light-mode .dark-nav-link { color: rgba(255,255,255,0.85); }
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) { .dark-transition, .dark-hover, .btn-primary, .btn-secondary { transition: none; } }
+
 /* Responsive */
-@media (max-width: 767px) {
-  .dark-header { padding: 16px 20px; height: 70px; }
-  .display-huge { font-size: 42px; }
-}
+@media (max-width: 1024px) { .dark-nav { display: none; } }
+@media (max-width: 767px) { .dark-header { padding: 16px 20px; height: 70px; } .display-huge { font-size: 42px; } }
 
 /* Remove legacy CRA demo styles */
 .App-header, .App-logo, .App-link { display: none; }

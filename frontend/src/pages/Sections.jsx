@@ -14,33 +14,26 @@ import { Heart, Bookmark, Search, Send, Layers, Shield, Route, Users } from "luc
 
 // Utility helpers
 const ls = {
-  get(key, fallback) {
-    try { const v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; } catch { return fallback; }
-  },
-  set(key, value) {
-    try { localStorage.setItem(key, JSON.stringify(value)); } catch {}
-  },
+  get(key, fallback) { try { const v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; } catch { return fallback; } },
+  set(key, value) { try { localStorage.setItem(key, JSON.stringify(value)); } catch {} },
 };
+
+function SectionHeader({ title, subtitle }) {
+  return (
+    <div className="mb-6">
+      <h2 className="display-large mb-2">{title}</h2>
+      {subtitle && <p className="body-small text-white/70">{subtitle}</p>}
+    </div>
+  );
+}
 
 // Landing Page
 export function Landing() {
   const features = [
-    {
-      icon: <Shield size={20} />, title: "Shift Left, Ship Faster",
-      text: "Bake security into code reviews and pipelines to reduce rework and MTTR.",
-    },
-    {
-      icon: <Layers size={20} />, title: "Secure Supply Chain",
-      text: "SBOMs, signing, and provenance deliver trust from source to runtime.",
-    },
-    {
-      icon: <Route size={20} />, title: "Automated Guardrails",
-      text: "Policy-as-code enforces standards without blocking dev velocity.",
-    },
-    {
-      icon: <Users size={20} />, title: "Culture + Tools",
-      text: "Security becomes a team sport when tooling aligns with workflows.",
-    },
+    { icon: <Shield size={20} />, title: "Shift Left, Ship Faster", text: "Bake security into code reviews and pipelines to reduce rework and MTTR." },
+    { icon: <Layers size={20} />, title: "Secure Supply Chain", text: "SBOMs, signing, and provenance deliver trust from source to runtime." },
+    { icon: <Route size={20} />, title: "Automated Guardrails", text: "Policy-as-code enforces standards without blocking dev velocity." },
+    { icon: <Users size={20} />, title: "Culture + Tools", text: "Security becomes a team sport when tooling aligns with workflows." },
   ];
 
   return (
@@ -51,15 +44,12 @@ export function Landing() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
             <div className="lg:col-span-7">
               <h1 className="display-huge mb-6">Why DevSecOps is the Future</h1>
-              <p className="body-medium mb-8 max-w-2xl text-white/80">
-                Security cannot be a gate at the end. It must be integrated into every stage of delivery —
-                from code to cloud — without slowing teams. This is how modern software wins.
-              </p>
+              <p className="body-medium mb-8 max-w-2xl text-white/80">Security cannot be a gate at the end. It must be integrated into every stage of delivery — from code to cloud — without slowing teams. This is how modern software wins.</p>
               <div className="flex flex-wrap items-center gap-4">
-                <Link to="/blogs" className="btn-primary dark-button-animate">Blogs</Link>
-                <Link to="/tools" className="btn-primary dark-button-animate">Tools</Link>
-                <Link to="/path" className="btn-primary dark-button-animate">Path</Link>
-                <Link to="/community" className="btn-primary dark-button-animate">Community</Link>
+                <Link to="/blogs" className="btn-primary" aria-label="Go to Blogs">Blogs</Link>
+                <Link to="/tools" className="btn-primary" aria-label="Go to Tools">Tools</Link>
+                <Link to="/path" className="btn-primary" aria-label="Go to Path">Path</Link>
+                <Link to="/community" className="btn-primary" aria-label="Go to Community">Community</Link>
                 <a href="#why" className="btn-secondary">Learn why</a>
               </div>
             </div>
@@ -82,9 +72,7 @@ export function Landing() {
                 </div>
                 <div className="p-6 relative z-10">
                   <h3 className="heading-2 mb-2">Secure by Design</h3>
-                  <p className="body-small text-white/70">
-                    A resilient pipeline verifies integrity, automates checks, and gives developers instant feedback.
-                  </p>
+                  <p className="body-small text-white/70">A resilient pipeline verifies integrity, automates checks, and gives developers instant feedback.</p>
                   <ul className="mt-6 grid grid-cols-2 gap-2 text-sm text-white/70">
                     <li>• SAST &amp; IaC checks</li>
                     <li>• SBOM + signing</li>
@@ -121,7 +109,7 @@ export function Landing() {
               <AccordionItem value="item-2">
                 <AccordionTrigger>Will there be light and dark themes?</AccordionTrigger>
                 <AccordionContent>
-                  Yes. Sub-pages support theme toggling; the main landing remains a high-contrast dark experience.
+                  Yes. Sub-pages support theme toggling on surface elements while the main background remains black for optimal contrast.
                 </AccordionContent>
               </AccordionItem>
             </Accordion>
@@ -134,33 +122,26 @@ export function Landing() {
 
 // Blogs Page (Masonry-style without large bright images)
 export function Blogs() {
+  const [raw, setRaw] = useState("");
   const [query, setQuery] = useState("");
   const [saved, setSaved] = useState(() => ls.get("savedBlogs", {}));
 
+  useEffect(() => { const t = setTimeout(() => setQuery(raw), 200); return () => clearTimeout(t); }, [raw]);
   useEffect(() => { ls.set("savedBlogs", saved); }, [saved]);
 
   const filtered = useMemo(() => {
     const q = query.toLowerCase();
-    return mock.blogs.filter(b =>
-      b.title.toLowerCase().includes(q) ||
-      b.excerpt.toLowerCase().includes(q) ||
-      b.tags.some(t => t.toLowerCase().includes(q))
-    );
+    return mock.blogs.filter(b => b.title.toLowerCase().includes(q) || b.excerpt.toLowerCase().includes(q) || b.tags.some(t => t.toLowerCase().includes(q)));
   }, [query]);
 
   return (
     <div className="dark-full-container" style={{ background: "var(--bg-primary)" }}>
       <div className="dark-content-container pad-large">
         <div className="flex items-center justify-between gap-4 mb-6">
-          <h2 className="display-large">Blogs</h2>
+          <SectionHeader title="Blogs" />
           <div className="flex items-center gap-2 w-full max-w-md">
             <Search size={18} className="text-white/60" />
-            <Input
-              placeholder="Search posts, tags, authors..."
-              value={query}
-              onChange={e => setQuery(e.target.value)}
-              className="bg-[#121212] text-white border-border"
-            />
+            <Input placeholder="Search posts, tags, authors..." value={raw} onChange={e => setRaw(e.target.value)} className="bg-[#121212] text-white border-border" aria-label="Search blogs" />
           </div>
         </div>
 
@@ -174,19 +155,15 @@ export function Blogs() {
                 <CardContent>
                   <p className="body-small text-white/70 mb-3">{post.excerpt}</p>
                   <div className="flex flex-wrap gap-2 mb-4">
-                    {post.tags.map((t, i) => (
-                      <Badge key={i} className="bg-white/10 text-white border-0">{t}</Badge>
-                    ))}
+                    {post.tags.map((t, i) => (<Badge key={i} className="bg-white/10 text-white border-0">{t}</Badge>))}
                   </div>
                   <div className="flex items-center justify-between text-sm text-white/60">
                     <span>{post.author} • {new Date(post.date).toLocaleDateString()}</span>
                     <div className="flex items-center gap-2">
-                      <ShadButton variant="ghost" className="text-white/70 hover:text-[#00FFD1]" onClick={() => setSaved(s => ({ ...s, [post.id]: !s[post.id] }))}>
+                      <ShadButton variant="ghost" className="text-white/70 hover:text-[#00FFD1]" aria-label="Save" onClick={() => setSaved(s => ({ ...s, [post.id]: !s[post.id] }))}>
                         <Bookmark size={18} fill={saved[post.id] ? "#00FFD1" : "none"} color={saved[post.id] ? "#00FFD1" : "currentColor"} />
                       </ShadButton>
-                      <ShadButton variant="ghost" className="text-white/70 hover:text-[#00FFD1]">
-                        <Heart size={18} />
-                      </ShadButton>
+                      <ShadButton variant="ghost" className="text-white/70 hover:text-[#00FFD1]" aria-label="Like"><Heart size={18} /></ShadButton>
                     </div>
                   </div>
                 </CardContent>
@@ -202,29 +179,32 @@ export function Blogs() {
 // Tools Page
 export function Tools() {
   const [category, setCategory] = useState("all");
+  const [sort, setSort] = useState("name");
   const cats = useMemo(() => ["all", ...Array.from(new Set(mock.tools.map(t => t.category)))], []);
-  const data = useMemo(
-    () => mock.tools.filter(t => category === "all" || t.category === category),
-    [category]
-  );
+  const data = useMemo(() => {
+    const filtered = mock.tools.filter(t => category === "all" || t.category === category);
+    const sorted = [...filtered].sort((a, b) => sort === "name" ? a.name.localeCompare(b.name) : a.category.localeCompare(b.category));
+    return sorted;
+  }, [category, sort]);
 
   return (
     <div className="dark-full-container" style={{ background: "var(--bg-primary)" }}>
       <div className="dark-content-container pad-large">
         <div className="flex items-center justify-between gap-4 mb-6">
-          <h2 className="display-large">Tools</h2>
-          <Select value={category} onValueChange={setCategory}>
-            <SelectTrigger className="w-48 bg-[#121212] text-white border-border">
-              <SelectValue placeholder="Filter by" />
-            </SelectTrigger>
-            <SelectContent className="bg-[#121212] text-white">
-              <SelectGroup>
-                {cats.map(c => (
-                  <SelectItem key={c} value={c}>{c}</SelectItem>
-                ))}
-              </SelectGroup>
-            </SelectContent>
-          </Select>
+          <SectionHeader title="Tools" />
+          <div className="flex items-center gap-2">
+            <Select value={category} onValueChange={setCategory}>
+              <SelectTrigger className="w-40 bg-[#121212] text-white border-border" aria-label="Filter category"><SelectValue placeholder="Filter" /></SelectTrigger>
+              <SelectContent className="bg-[#121212] text-white"><SelectGroup>{cats.map(c => (<SelectItem key={c} value={c}>{c}</SelectItem>))}</SelectGroup></SelectContent>
+            </Select>
+            <Select value={sort} onValueChange={setSort}>
+              <SelectTrigger className="w-36 bg-[#121212] text-white border-border" aria-label="Sort by"><SelectValue placeholder="Sort" /></SelectTrigger>
+              <SelectContent className="bg-[#121212] text-white"><SelectGroup>
+                <SelectItem value="name">Name</SelectItem>
+                <SelectItem value="category">Category</SelectItem>
+              </SelectGroup></SelectContent>
+            </Select>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
@@ -236,11 +216,9 @@ export function Tools() {
               <CardContent>
                 <p className="body-small text-white/70 mb-3">{tool.description}</p>
                 <div className="flex flex-wrap gap-2 mb-4">
-                  {tool.tags.map((t, i) => (
-                    <Badge key={i} className="bg-white/10 text-white border-0">{t}</Badge>
-                  ))}
+                  {tool.tags.map((t, i) => (<Badge key={i} className="bg-white/10 text-white border-0">{t}</Badge>))}
                 </div>
-                <a href={tool.url} target="_blank" rel="noreferrer" className="btn-primary">Visit</a>
+                <a href={tool.url} target="_blank" rel="noreferrer" className="btn-primary" aria-label={`Visit ${tool.name}`}>Visit</a>
               </CardContent>
             </Card>
           ))}
@@ -263,15 +241,9 @@ export function Path() {
   return (
     <div className="dark-full-container" style={{ background: "var(--bg-primary)" }}>
       <div className="dark-content-container pad-large max-w-5xl">
-        <div className="mb-6">
-          <h2 className="display-large mb-2">Learning Path</h2>
-          <p className="body-small text-white/70">Modeled after structured platforms like KodeKloud — track your progress and build real skills.</p>
-        </div>
+        <SectionHeader title="Learning Path" subtitle="Modeled after structured platforms like KodeKloud — track your progress and build real skills." />
         <div className="mb-8">
-          <div className="flex items-center justify-between mb-2">
-            <span className="body-small">Progress: {completed}/{total}</span>
-            <span className="body-small">{pct}%</span>
-          </div>
+          <div className="flex items-center justify-between mb-2"><span className="body-small">Progress: {completed}/{total}</span><span className="body-small">{pct}%</span></div>
           <Progress value={pct} className="h-2" />
         </div>
 
@@ -286,17 +258,7 @@ export function Path() {
                     <p className="body-muted">~{Math.round(step.durationMin / 60)}h</p>
                   </div>
                   <label className="flex items-center gap-2 cursor-pointer select-none">
-                    <input
-                      type="checkbox"
-                      checked={done.has(step.id)}
-                      onChange={(e) => {
-                        setDone(prev => {
-                          const n = new Set(prev);
-                          if (e.target.checked) n.add(step.id); else n.delete(step.id);
-                          return n;
-                        });
-                      }}
-                    />
+                    <input type="checkbox" checked={done.has(step.id)} onChange={(e) => { setDone(prev => { const n = new Set(prev); if (e.target.checked) n.add(step.id); else n.delete(step.id); return n; }); }} />
                     <span className="body-small">Mark done</span>
                   </label>
                 </div>
@@ -313,27 +275,15 @@ export function Path() {
 export function Community() {
   const [channel, setChannel] = useState(mock.channels[0].name);
   const storageKey = (c) => `chat:${c}`;
-  const [messages, setMessages] = useState(() => {
-    const init = mock.initialMessages[channel] || [];
-    return ls.get(storageKey(channel), init);
-  });
+  const [messages, setMessages] = useState(() => { const init = mock.initialMessages[channel] || []; return ls.get(storageKey(channel), init); });
   const [text, setText] = useState("");
   const listRef = useRef(null);
 
-  useEffect(() => {
-    const init = mock.initialMessages[channel] || [];
-    setMessages(ls.get(storageKey(channel), init));
-  }, [channel]);
-
+  useEffect(() => { const init = mock.initialMessages[channel] || []; setMessages(ls.get(storageKey(channel), init)); }, [channel]);
   useEffect(() => { ls.set(storageKey(channel), messages); }, [messages, channel]);
   useEffect(() => { listRef.current?.scrollTo({ top: 999999, behavior: "smooth" }); }, [messages]);
 
-  const send = () => {
-    const val = text.trim();
-    if (!val) return;
-    setMessages((m) => [...m, { id: crypto.randomUUID(), author: "You", text: val, ts: Date.now() }]);
-    setText("");
-  };
+  const send = () => { const val = text.trim(); if (!val) return; setMessages((m) => [...m, { id: crypto.randomUUID(), author: "You", text: val, ts: Date.now() }]); setText(""); };
 
   return (
     <div className="dark-full-container" style={{ background: "var(--bg-primary)" }}>
@@ -345,12 +295,7 @@ export function Community() {
               <ul className="space-y-2">
                 {mock.channels.map((c) => (
                   <li key={c.id}>
-                    <button
-                      className={`w-full text-left px-3 py-2 dark-transition ${channel === c.name ? "bg-white/10 text-white" : "text-white/70 hover:bg-white/5"}`}
-                      onClick={() => setChannel(c.name)}
-                    >
-                      {c.name}
-                    </button>
+                    <button className={`w-full text-left px-3 py-2 dark-transition ${channel === c.name ? "bg-white/10 text-white" : "text-white/70 hover:bg-white/5"}`} onClick={() => setChannel(c.name)} aria-pressed={channel === c.name}>{c.name}</button>
                   </li>
                 ))}
               </ul>
@@ -366,7 +311,7 @@ export function Community() {
               <ScrollArea className="flex-1 p-4" ref={listRef}>
                 <div className="space-y-3 pr-2">
                   {messages.map(m => (
-                    <div key={m.id} className="">
+                    <div key={m.id}>
                       <div className="text-sm text-white/60">{new Date(m.ts).toLocaleTimeString()} • {m.author}</div>
                       <div className="mt-1 bg-white/5 px-3 py-2 inline-block rounded">{m.text}</div>
                     </div>
@@ -374,13 +319,8 @@ export function Community() {
                 </div>
               </ScrollArea>
               <div className="p-4 border-t border-white/10 flex items-center gap-2">
-                <Textarea
-                  value={text}
-                  onChange={(e) => setText(e.target.value)}
-                  placeholder="Write a message"
-                  className="bg-[#121212] text-white border-border h-24"
-                />
-                <button className="btn-primary" onClick={send}><Send size={18} /></button>
+                <Textarea value={text} onChange={(e) => setText(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); } }} placeholder="Write a message" className="bg-[#121212] text-white border-border h-24" />
+                <button className="btn-primary" onClick={send} aria-label="Send"><Send size={18} /></button>
               </div>
             </div>
           </section>
