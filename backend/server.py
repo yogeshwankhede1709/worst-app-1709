@@ -91,9 +91,10 @@ class BlogUpdate(BaseModel):
 
 @api_router.post("/blogs", response_model=Blog)
 async def create_blog(b: BlogCreate):
-    obj = Blog(**(b.model_dump()))
-    if obj.date is None:
-        obj.date = datetime.utcnow()
+    blog_data = b.model_dump()
+    if blog_data.get("date") is None:
+        blog_data["date"] = datetime.utcnow()
+    obj = Blog(**blog_data)
     d = obj.model_dump()
     d["_id"] = obj.id
     await db.blogs.insert_one(d)
