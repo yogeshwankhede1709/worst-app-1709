@@ -129,9 +129,9 @@ function AppShell() {
 export default function App() {
   return (
     <BrowserRouter>
-      <ErrorBoundary>
+      <AppErrorBoundary>
         <AppShell />
-      </ErrorBoundary>
+      </AppErrorBoundary>
     </BrowserRouter>
   );
 }
