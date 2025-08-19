@@ -53,17 +53,20 @@ def make_request(method, endpoint, data=None, params=None):
     url = f"{API_URL}{endpoint}"
     try:
         if method == "GET":
-            response = requests.get(url, params=params, timeout=10)
+            response = requests.get(url, params=params, timeout=15)
         elif method == "POST":
-            response = requests.post(url, json=data, timeout=10)
+            response = requests.post(url, json=data, timeout=15)
         elif method == "PATCH":
-            response = requests.patch(url, json=data, timeout=10)
+            response = requests.patch(url, json=data, timeout=15)
         elif method == "DELETE":
-            response = requests.delete(url, timeout=10)
+            response = requests.delete(url, timeout=15)
         else:
             raise ValueError(f"Unsupported method: {method}")
         
         return response
+    except requests.exceptions.Timeout:
+        print(f"Request timed out: {method} {url}")
+        return None
     except requests.exceptions.RequestException as e:
         print(f"Request failed: {e}")
         return None
