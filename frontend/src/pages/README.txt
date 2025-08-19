@@ -1,0 +1,1 @@
+Pages are bundled together in Sections.jsx to keep bulk file count under 5 as per workflow. Each component remains within ~300 lines. This file exists only as a placeholder for directory visibility.
